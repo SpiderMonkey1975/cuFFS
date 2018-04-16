@@ -24,6 +24,7 @@ sarrvesh.ss@gmail.com
 #include<stdio.h>
 #include<time.h>
 #include<string.h>
+#include<cuda.h>
 
 #include "structures.h"
 #include "constants.h"

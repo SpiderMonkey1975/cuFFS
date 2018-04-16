@@ -6,10 +6,10 @@ CC=gcc
 CFLAGS=-O3 -g -mfma -mavx2
 CPPFLAGS=
 
-HDF5_LIBS=-lhdf5 -lhdf5_hl
-LIBCONFIG_LIB=-lconfig
-CFITSIO_LIB=-lcfitsio
-CUDA_LIB=-lcudart
+HDF5_LIBS=-L${HDF5_DIR}/lib -lhdf5 -lhdf5_hl
+LIBCONFIG_LIB=-L${MAALI_LIBCONFIG_HOME}/lib -lconfig
+CFITSIO_LIB=-L${CFITSIO_ROOT}/lib -lcfitsio
+CUDA_LIB=-L${NVIDIA_CUDA_HOME}/lib64 -lcudart
 LIBS=$(LIBCONFIG_LIB) $(CFITSIO_LIB) $(CUDA_LIB) -lm $(HDF5_LIBS)
 
 ##
@@ -17,7 +17,7 @@ LIBS=$(LIBCONFIG_LIB) $(CFITSIO_LIB) $(CUDA_LIB) -lm $(HDF5_LIBS)
 ##-------------------------------------------------
 
 # Kepler support
-GPU_ARCH_FLAG="-gencode arch=compute_30,code=sm_30"
+GPU_ARCH_FLAG=-arch=sm_30
 
 # Pascal support
 #GPU_ARCH_FLAG="-gencode arch=compute_60,code=sm_60"
@@ -26,27 +26,22 @@ GPU_ARCH_FLAG="-gencode arch=compute_30,code=sm_30"
 ## Add gnuplot support (if available)
 ##-----------------------------------
 
-if ! gnuplot_loc="$(type -p gnuplot)" || [ -z "$gnuplot_loc" ]; then
-else
-	CPPFLAGS+="-DGNUPLOT_ENABLE"
-fi
-
+#CPPFLAGS+="-DGNUPLOT_ENABLE"
 
 ##
 ## Compilation rules
 ##-------------------
 
-OBJ=src/devices.o \
-	src/fileaccess.o \
-	src/inputparser.c \
-	src/rmsf.c \
-	src/rmsynthesis.o
+OBJ=devices.o fileaccess.o inputparser.o rmsf.o rmsynthesis.o
 
 %.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS) $(HDF5_LIBS)
 
-%.0: %.cu
-	nvcc -c -o $@ $< -O3  $(HDF5_LIBS) $(GPU_ARCH_FLAG)
+%.o: %.cu
+	nvcc -c -o $@ $< -O3 -I${NVIDIA_CUDA_HOME}/include $(HDF5_LIBS) $(GPU_ARCH_FLAG)
 
 rmsythesis: $(OBJ)
-	nvcc -o $@ $^ -O3 $(LIBS) $(GPU_ARCH_FLAG)
+	nvcc -o $@ $^ -O3 -I${NVIDIA_CUDA_HOME}/include $(LIBS) $(GPU_ARCH_FLAG)
+
+clean:
+	rm *.o rmsythesis

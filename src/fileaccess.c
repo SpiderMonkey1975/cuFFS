@@ -303,9 +303,9 @@ void makeOutputHDF5Images(struct optionsList *inOptions, struct parList *params)
    params->pDirtyH5 = H5Fcreate(filenamefull, H5F_ACC_EXCL, H5P_DEFAULT, H5P_DEFAULT);
 
    /* Create the primary group */
-   qGrp = H5Gcreate(params->qDirtyH5, PRIMARY, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-   uGrp = H5Gcreate(params->uDirtyH5, PRIMARY, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
-   pGrp = H5Gcreate(params->pDirtyH5, PRIMARY, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+   qGrp = H5Gcreate(params->qDirtyH5, PRIMARY, H5P_DEFAULT);
+   uGrp = H5Gcreate(params->uDirtyH5, PRIMARY, H5P_DEFAULT);
+   pGrp = H5Gcreate(params->pDirtyH5, PRIMARY, H5P_DEFAULT);
    if( qGrp<0 || uGrp<0 || pGrp<0) {
       printf("Error: Unable to create groups in output HDF5 files\n");
       exit(FAILURE);
