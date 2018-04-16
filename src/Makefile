@@ -23,12 +23,12 @@ GPU_ARCH_FLAG="-gencode arch=compute_30,code=sm_30"
 #GPU_ARCH_FLAG="-gencode arch=compute_60,code=sm_60"
 
 ##
-## Test if gnuplot is available
-##------------------------------
+## Add gnuplot support (if available)
+##-----------------------------------
 
 if ! gnuplot_loc="$(type -p gnuplot)" || [ -z "$gnuplot_loc" ]; then
 else
-    CPPFLAGS+="-DGNUPLOT_ENABLE"
+	CPPFLAGS+="-DGNUPLOT_ENABLE"
 fi
 
 
